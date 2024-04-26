@@ -250,6 +250,7 @@ def actualizar_tabla(table,column,row,intersection_value,pivot):
 
 def two_phase_simplex(constraints):
     #########FASE 1#########
+    print("*********Fase 1***********")
     #separar las restricciones para solamente usar las de tipo >=
     phase1_constraints = [constraint for constraint in constraints if constraint["sign"] == ">="]
     # Crear una tabla para la fase 1
@@ -356,22 +357,34 @@ def two_phase_simplex(constraints):
                 table_temp = actualizar_tabla(table_temp,column,row,intersection_value,pivot)
 
                 break
-        #actualizar la tabla #Pasar por todas als filas u sar get_row_values para formatearlas bien
-        for i in range (0,len(tabla_temp._rows)):
-            z_row = get_row_values(tabla_temp,i)
-            print("Prueba en 360",z_row)
-            tabla_temp._rows[i] =  z_row
-
+        #actualizar la tabla
+        z_row = get_row_values(table_temp,0)
+        print("Prueba en 352",z_row)
+        tabla_temp._rows[0] =  z_row 
+        print("table_temp")
         print(tabla_temp)
         break
     ##########FASE 2##########
-    #encontrar cuantas variables artificiales existen
-    artificial_vars = [header for header in header_row if 'a' in header]
-    #quitar de la tabla las variables artificiales
-    for var in artificial_vars:
-        table_temp.del_column(var)
-    #actualizar la tabla
-    #agregar los coeficientes de la funcion objetivo a la tabla
+    print("*********Fase 2***********")
+    #se eliminan las columnas correspondientes a las variables artificiales y reconstruir la tabla inicial.
+    # se reestablecen los valores de la funcion objetivo
+
+    # borrando las columnas de las variables artificiales
+    for i in range(1,len(header_row)):
+        if header_row[i][0] == 'a':
+            table_temp.del_column(header_row[i])
+            
+    # Agregar los valores de la función objetivo a la tabla
+    # obtener valores de fila z, excepto el primer valor
+    z_row = get_row_values(table_temp,0)
+    
+    for i in range(2,len(objective_coefs)+2):
+        z_row[i] = objective_coefs[header_row[i]]
+
+    table_temp._rows[0] = z_row
+
+    print("Tabla actualizada temp fase 2:")
+    print(table_temp)
     
     
     
