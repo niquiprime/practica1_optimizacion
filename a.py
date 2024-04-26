@@ -354,15 +354,14 @@ def two_phase_simplex(constraints):
         print(tabla_temp)
         break
     ##########FASE 2##########
-    #recoger la primera fila de la tabla para encontrar cuantas variables artificales existen
-    first_row = get_row_values(table_temp, 0)
     #encontrar cuantas variables artificiales existen
     artificial_vars = [header for header in header_row if 'a' in header]
     #quitar de la tabla las variables artificiales
     for var in artificial_vars:
         table_temp.del_column(var)
     #actualizar la tabla
-    print(table_temp)
+    #agregar los coeficientes de la funcion objetivo a la tabla
+    
     
     
 def solve_simplex(maximaze, objective_coefs, num_slack_vars):
