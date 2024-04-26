@@ -353,6 +353,17 @@ def two_phase_simplex(constraints):
         tabla_temp._rows[0] =  z_row #sexo
         print(tabla_temp)
         break
+    ##########FASE 2##########
+    #recoger la primera fila de la tabla para encontrar cuantas variables artificales existen
+    first_row = get_row_values(table_temp, 0)
+    #encontrar cuantas variables artificiales existen
+    artificial_vars = [header for header in header_row if 'a' in header]
+    #quitar de la tabla las variables artificiales
+    for var in artificial_vars:
+        table_temp.del_column(var)
+    #actualizar la tabla
+    print(table_temp)
+    
     
 def solve_simplex(maximaze, objective_coefs, num_slack_vars):
     if maximize == True:
@@ -376,7 +387,6 @@ def solve_simplex(maximaze, objective_coefs, num_slack_vars):
         # Actualizar la tabla
         table = actualizar_tabla(table,column,row,intersection_value,pivot)
         print("\nTabla actualizada:")
-        print(table)
 
         # Repetir el proceso hasta que no haya valores negativos en los primeros 3 valores de la primera fila'
         while True:
@@ -388,12 +398,10 @@ def solve_simplex(maximaze, objective_coefs, num_slack_vars):
                     print("\nTabla actualizada:")
                     #borrar la columna de ratios
                     table.del_column('Ratios')
-                    print(table)
                     i = 0
                     break
             else:
                 print("\nSolución óptima encontrada.")
-                print (table)
             break
     if maximize == False:
         print("Resolviendo problema de minimización...")
