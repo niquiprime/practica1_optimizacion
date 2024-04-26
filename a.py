@@ -255,7 +255,7 @@ def two_phase_simplex(constraints):
     header_row.append("LD")
     table_temp.field_names = header_row
     #agregar en la primera fila un 1 en cada A y 0 en cada E
-    row = ["Z", -1]
+    row = ["Z", 1]
     for i in range(len(objective_coefs)):
         row.append(0)
     for constraint in phase1_constraints:
@@ -331,7 +331,7 @@ def two_phase_simplex(constraints):
             break
         break
     while True:
-         #verificar si aun hay negativos en la funcion objetivo
+        #verificar si aun hay negativos en la funcion objetivo
         obj_func = get_row_values(table_temp, 0)
         print (obj_func)
         except_values = ['VB', 'Z', 'LD']
@@ -375,9 +375,8 @@ def two_phase_simplex(constraints):
     table_temp._rows[0] = z_row
 
     print("Tabla actualizada temp fase 2:")
-    print(table_temp)
-    
-    
+    return table_temp
+
     
 def solve_simplex(maximaze, objective_coefs, num_slack_vars):
     if maximize == True:
@@ -402,24 +401,56 @@ def solve_simplex(maximaze, objective_coefs, num_slack_vars):
         table = actualizar_tabla(table,column,row,intersection_value,pivot)
         print("\nTabla actualizada:")
 
-        # Repetir el proceso hasta que no haya valores negativos en los primeros 3 valores de la primera fila'
         while True:
             prueba1 = get_row_values(table, 0)
             for i in range(1,len(objective_coefs)+2):
                 if prueba1[i] < 0:
                     column, row, intersection_value,pivot = Elegir_pivote(objective_coefs,table)
                     table = actualizar_tabla(table,column,row,intersection_value,pivot)
-                    print("\nTabla actualizada:")
                     #borrar la columna de ratios
                     table.del_column('Ratios')
                     i = 0
                     break
-            else:
-                print("\nSolución óptima encontrada.")
             break
     if maximize == False:
         print("Resolviendo problema de minimización...")
-    
+        negated_objective = negate_objective(objective_coefs, num_slack_vars)
+        equation = format_equation(negated_objective)
+        print("Función objetivo igualada a 0:", equation)
+        #comprobar si existen restricciones de tipo >=
+        
+        # Generar tabla inicial
+        print("\nTabla inicial:")
+        table = generate_initial_table(objective_coefs, num_slack_vars)
+        column, row, intersection_value,pivot = Elegir_pivote(objective_coefs,table)
+
+        for constraint in constraints:
+            if constraint["sign"] == ">=":
+                table = two_phase_simplex(constraints)
+                break
+        print("\nTabla actualizada:")
+        print(table)
+
+        #recoger el valor en un diccionario de cadad elemento de la fila 1
+        prueba1 = get_row_values(table, 0)
+        # Recoger el valor en un diccionario de cada elemento de la fila 1, excluyendo 'Z' y las variables de exceso
+        coef_value = {table.field_names[i]: prueba1[i] for i in range(1,len(prueba1)) if table.field_names[i] != 'Z' and not table.field_names[i].startswith('e') and not table.field_names[i].startswith('LD') and not table.field_names[i].startswith('Ratios')}
+
+        # Obtener los valores de la columna 'VB', excluyendo 'Z'
+        vb_column = get_column_values(table, 'VB') if 'VB' != 'Z' else []
+
+        #verificar si los valores de vb column corresponden a la variable en coef_value
+        # Verificar si los valores de vb_column corresponden a la variable en coef_value y guardar el índice si coinciden
+        matching_indices = []
+        for i, value in enumerate(vb_column):
+            if value in coef_value.items():
+                matching_indices.append(i)
+
+        print(matching_indices)
+        
+
+        
+
     
 
     #calcular precio sombra
