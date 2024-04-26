@@ -2,12 +2,21 @@ import argparse
 import re
 from prettytable import PrettyTable
 import sys
-casicero = (sys.float_info.epsilon)
 
 def comparar_epsilon(valor):
     epsilon_maquina = sys.float_info.epsilon
     if abs(valor) <= epsilon_maquina:
         return 0
+    elif (valor > 0):
+        aux = valor - epsilon_maquina
+        if int(valor) == valor - epsilon_maquina:
+            return aux
+        return valor
+    elif (valor < 0):
+        aux = valor + epsilon_maquina
+        if int(valor) == valor + epsilon_maquina:
+            return aux
+        return valor
     else:
         return valor
 
@@ -347,10 +356,12 @@ def two_phase_simplex(constraints):
                 table_temp = actualizar_tabla(table_temp,column,row,intersection_value,pivot)
 
                 break
-        #actualizar la tabla
-        z_row = get_row_values(table_temp,0)
-        print("Prueba en 352",z_row)
-        tabla_temp._rows[0] =  z_row #sexo
+        #actualizar la tabla #Pasar por todas als filas u sar get_row_values para formatearlas bien
+        for i in range (0,len(tabla_temp._rows)):
+            z_row = get_row_values(tabla_temp,i)
+            print("Prueba en 360",z_row)
+            tabla_temp._rows[i] =  z_row
+
         print(tabla_temp)
         break
     ##########FASE 2##########
