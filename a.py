@@ -9,12 +9,12 @@ def comparar_epsilon(valor):
         return 0
     elif (valor > 0):
         aux = valor - epsilon_maquina
-        if int(valor) == valor - epsilon_maquina:
+        if float(valor) == valor - epsilon_maquina:
             return aux
         return valor
     elif (valor < 0):
         aux = valor + epsilon_maquina
-        if int(valor) == valor + epsilon_maquina:
+        if float(valor) == valor + epsilon_maquina:
             return aux
         return valor
     else:
@@ -217,7 +217,11 @@ def actualizar_tabla(table,column,row,intersection_value,pivot):
     # Encontrar los índices de 'Z' y 'H3' pivot
     start_index = table.field_names.index('Z')
     end_index = table.field_names.index('Ratios')
-
+    for i in range (0,len(table._rows)):
+                z_row = get_row_values(table,i)
+                print("Prueba en 222",z_row)
+                table._rows[i] =  z_row   
+    print(table)
     # Dividir los valores desde 'Z' hasta 'ratios' por el valor de intersección ademas de cambiar el primer valor por x o y respectivamente
     new_row = row[:start_index] + [value / intersection_value for value in row[start_index:end_index]] + row[end_index:]
     new_row[0] = pivot
@@ -358,9 +362,10 @@ def two_phase_simplex(constraints):
 
                 break
         #actualizar la tabla
-        z_row = get_row_values(table_temp,0)
-        print("Prueba en 352",z_row)
-        tabla_temp._rows[0] =  z_row 
+        for i in range (0,len(tabla_temp._rows)):
+            z_row = get_row_values(tabla_temp,i)
+            print("Prueba en 360",z_row)
+            tabla_temp._rows[i] =  z_row
         print("table_temp")
         print(tabla_temp)
         break
@@ -446,19 +451,31 @@ def solve_simplex(maximaze, objective_coefs, num_slack_vars):
 
         # Actualizar la tabla
         table = actualizar_tabla(table,column,row,intersection_value,pivot)
+        for i in range (0,len(table._rows)):
+                z_row = get_row_values(table,i)
+                print("Prueba en 415",z_row)
+                table._rows[i] =  z_row
         print("\nTabla actualizada:")
 
         # Repetir el proceso hasta que no haya valores negativos en los primeros 3 valores de la primera fila'
         while True:
+            j = 0
+            j = j +1
             prueba1 = get_row_values(table, 0)
+            #actualizar la tabla
+            for i in range (0,len(table._rows)):
+                z_row = get_row_values(table,i)
+                print("Prueba en 427",z_row)
+                table._rows[i] =  z_row
             for i in range(1,len(objective_coefs)+2):
                 if prueba1[i] < 0:
                     column, row, intersection_value,pivot = Elegir_pivote(objective_coefs,table)
                     table = actualizar_tabla(table,column,row,intersection_value,pivot)
-                    print("\nTabla actualizada:")
-                    #borrar la columna de ratios
+                    print("\nTabla actualizada patata:")
+                    
                     table.del_column('Ratios')
                     i = 0
+                    print("Iteracion: ", j)
                     break
             else:
                 print("\nSolución óptima encontrada.")
