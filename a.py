@@ -1,7 +1,8 @@
 import argparse
 import re
 from prettytable import PrettyTable
-
+import sys
+#print(sys.float_info.epsilon)
 def add_slack_variables(constraints):
     new_constraints = []
     slack_count = 1
