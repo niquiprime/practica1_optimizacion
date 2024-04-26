@@ -9,12 +9,12 @@ def comparar_epsilon(valor):
         return 0
     elif (valor > 0):
         aux = valor - epsilon_maquina
-        if int(valor) == valor - epsilon_maquina:
+        if float(valor) == valor - epsilon_maquina:
             return aux
         return valor
     elif (valor < 0):
         aux = valor + epsilon_maquina
-        if int(valor) == valor + epsilon_maquina:
+        if float(valor) == valor + epsilon_maquina:
             return aux
         return valor
     else:
@@ -358,9 +358,10 @@ def two_phase_simplex(constraints):
 
                 break
         #actualizar la tabla
-        z_row = get_row_values(table_temp,0)
-        print("Prueba en 352",z_row)
-        tabla_temp._rows[0] =  z_row 
+        for i in range (0,len(tabla_temp._rows)):
+            z_row = get_row_values(tabla_temp,i)
+            print("Prueba en 360",z_row)
+            tabla_temp._rows[i] =  z_row
         print("table_temp")
         print(tabla_temp)
         break
