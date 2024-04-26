@@ -2,7 +2,15 @@ import argparse
 import re
 from prettytable import PrettyTable
 import sys
-#print(sys.float_info.epsilon)
+casicero = (sys.float_info.epsilon)
+
+def comparar_epsilon(valor):
+    epsilon_maquina = sys.float_info.epsilon
+    if abs(valor) <= epsilon_maquina:
+        return 0
+    else:
+        return valor
+
 def add_slack_variables(constraints):
     new_constraints = []
     slack_count = 1
@@ -81,10 +89,14 @@ def generate_initial_table(objective_coefs, num_slack_vars):
 def get_column_values(table, column_name):
     column_index = table.field_names.index(column_name)
     column_values = [row[column_index] for row in table._rows]
+    #column_values = [comparar_epsilon(valor) for valor in column_values]
+    
     return column_values
 
 def get_row_values(table, row_index):
     row_values = table._rows[row_index]
+    row_values = [row_values[0]] + [comparar_epsilon(valor) for valor in row_values[1:]]
+    #print("wañoños",row_values)
     return row_values
 
 def get_intersection_value(table, row_index, column_name):
@@ -130,12 +142,12 @@ def Elegir_pivote_M2F(objective_coefs,tablita):
     row = get_row_values(tablita, pivot_row)
 
     intersection_value = get_intersection_value(tablita, pivot_row, pivot)
-
+    
     row = get_row_values(tablita, pivot_row)
     column = get_column_values(tablita, pivot)
-    
+    arreglo_modificado = [row[0]] + [comparar_epsilon(valor) for valor in row[1:]]
     print('Valor columna ',column)
-    print('valor fila ', row)
+    print('valor fila sus', arreglo_modificado)
     print(tablita)
 
     return column,row,intersection_value,pivot
@@ -303,11 +315,16 @@ def two_phase_simplex(constraints):
                 column, row, intersection_value,pivot = Elegir_pivote_M2F(obj_func_dict,table_temp)
                 table_temp = actualizar_tabla(table_temp,column,row,intersection_value,pivot)
                 #borrar la columna de ratios
+                #z_row = get_row_values(table_temp,0)
                 table_temp.del_column('Ratios')
+                #tabla_temp._rows[0] = z_row
+                #print("Prueba",z_row)
                 print(table_temp)
                 i = 0
                 break
+            
         else:
+            
             print("\nSolución óptima encontrada.")
             print (table_temp)
             break
@@ -331,6 +348,9 @@ def two_phase_simplex(constraints):
 
                 break
         #actualizar la tabla
+        z_row = get_row_values(table_temp,0)
+        print("Prueba en 352",z_row)
+        tabla_temp._rows[0] =  z_row #sexo
         print(tabla_temp)
         break
     
