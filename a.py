@@ -385,6 +385,43 @@ def two_phase_simplex(constraints):
 
     print("Tabla actualizada temp fase 2:")
     print(table_temp)
+
+    #valores indice de objetive_coefs
+    print(len(objective_coefs)+2)
+    print(list(objective_coefs.keys()))
+    print(z_row)
+    # desde valor 2 hasta el penuultimo valor de la fila z
+    print(z_row[2:-1])
+    
+    # iterar en la columna VB hasta encontrar algun valor que este dentro de list(objective_coefs.keys())
+    list_keys = list(objective_coefs.keys())
+    z_row_itera = z_row[2:-1]
+    z_row2 = z_row[2:-1]
+    cont = 0
+    suma2 = 0
+    for i in range(1,len(table_temp._rows)):
+        if table_temp._rows[i][0] in list_keys:
+            print("DEntro del if: ",table_temp._rows[i][0])
+            print(i)
+            row_temp = get_row_values(table_temp,i)
+            row_temp = row_temp[2:-1]
+            print(row_temp)
+            for j in range(len(row_temp)):
+                # (-z_row_valor * row_temp[j]) + z_row_valor
+                suma_temp = (-z_row_itera[cont] * row_temp[j]) + z_row_itera[cont]
+                suma2 = suma2 + suma_temp
+                print(f"{-z_row_itera[cont]} * {row_temp[j]} + {z_row_itera[cont]} = {suma_temp}")
+                z_row2[j] = z_row2[j] + suma_temp
+            print("Z_row2: ",z_row2)   
+            cont=+1
+            suma2 = 0
+
+    
+            
+
+                
+            
+
     
     
     
